@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Production App</title></head>
+<body>
+  <h1>Application en production (Alpine)</h1>
+  <div id="status">Chargement du statut backend...</div>
+  <script>
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(d => document.getElementById('status').innerText = 'Backend Status: ' + d.status)
+      .catch(() => document.getElementById('status').innerText = 'Backend indisponible');
+  </script>
+</body>
+</html>
