@@ -37,7 +37,8 @@ services:
 
   # --- Backend API ---
   backend:
-    image: iliasalami/alami_repo_ynov_backend:v1.0.0
+    build: ./Backend
+    image: tacos3v-backend:latest
     container_name: prod_backend
     restart: unless-stopped
     environment:
@@ -55,7 +56,8 @@ services:
 
   # --- Frontend Nginx ---
   frontend:
-    image: iliasalami/alami_repo_ynov_frontend:v1.0.0
+    build: ./Frontend
+    image: tacos3v-frontend:latest
     container_name: prod_frontend
     restart: unless-stopped
     expose:

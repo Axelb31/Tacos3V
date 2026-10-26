@@ -1,14 +1,158 @@
 <!DOCTYPE html>
-<html>
-<head><title>Production App</title></head>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tacos3V</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --card: #ffffff;
+      --text: #1d1b16;
+      --muted: #6b665c;
+      --border: #e4dfd4;
+      --accent: #d9480f;
+      --ok: #2b8a3e;
+      --ko: #c92a2a;
+      --wait: #868e96;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #16140f;
+        --card: #211e18;
+        --text: #f1ede4;
+        --muted: #a59f92;
+        --border: #3a352c;
+        --accent: #ff8a3d;
+        --ok: #51cf66;
+        --ko: #ff6b6b;
+        --wait: #868e96;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+    }
+    main { width: 100%; max-width: 520px; }
+    header { margin-bottom: 24px; }
+    .brand {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    h1 { margin: 4px 0 8px; font-size: 2rem; line-height: 1.2; }
+    .subtitle { margin: 0; color: var(--muted); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .status-row { display: flex; align-items: center; gap: 12px; }
+    .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--wait);
+      flex-shrink: 0;
+    }
+    .dot.ok { background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 20%, transparent); }
+    .dot.ko { background: var(--ko); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ko) 20%, transparent); }
+    .status-label { font-weight: 600; font-size: 1.05rem; }
+    dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 16px;
+      margin: 16px 0 0;
+      font-size: 0.9rem;
+    }
+    dt { color: var(--muted); }
+    dd { margin: 0; font-variant-numeric: tabular-nums; word-break: break-word; }
+    .actions { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 12px; }
+    button {
+      font: inherit;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); color: var(--accent); }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    .hint { color: var(--muted); font-size: 0.8rem; }
+    footer { margin-top: 16px; color: var(--muted); font-size: 0.8rem; text-align: center; }
+  </style>
+</head>
 <body>
-  <h1>Application en production (Alpine)</h1>
-  <div id="status">Chargement du statut backend...</div>
+  <main>
+    <header>
+      <div class="brand">Tacos3V</div>
+      <h1>Application en production</h1>
+      <p class="subtitle">Frontend Nginx · Backend Node.js · Docker</p>
+    </header>
+
+    <section class="card" aria-live="polite">
+      <div class="status-row">
+        <span id="dot" class="dot"></span>
+        <span id="status" class="status-label">Vérification du backend…</span>
+      </div>
+      <dl>
+        <dt>Service</dt><dd id="service">—</dd>
+        <dt>Réponse</dt><dd id="latency">—</dd>
+        <dt>Horodatage</dt><dd id="timestamp">—</dd>
+      </dl>
+      <div class="actions">
+        <span class="hint">Actualisation auto toutes les 30 s</span>
+        <button id="refresh" type="button">Actualiser</button>
+      </div>
+    </section>
+
+    <footer>GET /api/health</footer>
+  </main>
+
   <script>
-    fetch('/api/health')
-      .then(r => r.json())
-      .then(d => document.getElementById('status').innerText = 'Backend Status: ' + d.status)
-      .catch(() => document.getElementById('status').innerText = 'Backend indisponible');
+    const $ = (id) => document.getElementById(id);
+
+    async function checkHealth() {
+      const btn = $('refresh');
+      btn.disabled = true;
+      const start = performance.now();
+      try {
+        const res = await fetch('/api/health', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const ms = Math.round(performance.now() - start);
+        $('dot').className = 'dot ' + (data.status === 'ok' ? 'ok' : 'ko');
+        $('status').textContent = data.status === 'ok' ? 'Backend opérationnel' : 'Backend : ' + data.status;
+        $('service').textContent = data.service || '—';
+        $('latency').textContent = ms + ' ms';
+        $('timestamp').textContent = data.timestamp
+          ? new Date(data.timestamp).toLocaleString('fr-FR')
+          : '—';
+      } catch (err) {
+        $('dot').className = 'dot ko';
+        $('status').textContent = 'Backend indisponible';
+        $('service').textContent = '—';
+        $('latency').textContent = err.message;
+        $('timestamp').textContent = new Date().toLocaleString('fr-FR');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    $('refresh').addEventListener('click', checkHealth);
+    checkHealth();
+    setInterval(checkHealth, 30000);
   </script>
 </body>
 </html>
