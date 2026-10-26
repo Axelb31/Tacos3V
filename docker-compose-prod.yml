@@ -1,15 +1,37 @@
 version: '3.8'
 
 services:
-  # --- Reverse Proxy qui écoute sur le port 5050 ---
+  # --- Reverse Proxy Nginx ---
   nginx-proxy:
     image: nginxproxy/nginx-proxy
     container_name: nginx-reverse-proxy
+    restart: unless-stopped
     ports:
-      - "5050:80"  # <--- Le port externe est maintenant 5050 !
+      - "80:80"
+      - "443:443"  # <-- Port HTTPS requis !
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    networks:
+      - app-network
+
+  # --- Compagnon Let's Encrypt (SSL Automatique) ---
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
     restart: unless-stopped
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+    environment:
+      - DEFAULT_EMAIL=votre-email@exemple.com  # <-- Mettez votre vraie adresse e-mail !
+    depends_on:
+      - nginx-proxy
     networks:
       - app-network
 
@@ -37,15 +59,23 @@ services:
     container_name: prod_frontend
     restart: unless-stopped
     expose:
-      - "80"  # Le port interne sur lequel écoute le serveur Nginx du frontend
+      - "80"
     environment:
-      - VIRTUAL_HOST=mon-app.local # Ou l'IP de votre serveur / localhost
-      - VIRTUAL_PORT=80            # Transmet vers le port 80 interne de frontend
+      - VIRTUAL_HOST=test-alami.com,www.test-alami.com
+      - VIRTUAL_PORT=80
+      - LETSENCRYPT_HOST=test-alami.com,www.test-alami.com  # <-- Génère le certificat SSL pour ce domaine
     depends_on:
       backend:
         condition: service_healthy
     networks:
       - app-network
+
+# --- Volumes pour stocker durablement les certificats ---
+volumes:
+  certs:
+  vhost:
+  html:
+  acme:
 
 networks:
   app-network:
