@@ -30,6 +30,9 @@ services:
       - acme:/etc/acme.sh
     environment:
       - DEFAULT_EMAIL=votre-email@exemple.com  # <-- Mettez votre vraie adresse e-mail !
+      # Staging Let's Encrypt : certificats de test (non reconnus par les navigateurs), sans limite de quota.
+      # Supprimez cette ligne pour obtenir un vrai certificat.
+      - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory
     depends_on:
       - nginx-proxy
     networks:
