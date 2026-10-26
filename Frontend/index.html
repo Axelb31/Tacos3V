@@ -6,151 +6,383 @@
   <title>Tacos3V</title>
   <style>
     :root {
-      --bg: #f6f4ef;
-      --card: #ffffff;
-      --text: #1d1b16;
-      --muted: #6b665c;
-      --border: #e4dfd4;
+      --bg: #fbf7f0;
+      --surface: #ffffff;
+      --surface-2: #f3ece0;
+      --text: #1f1a14;
+      --muted: #6f665a;
+      --border: #e6ddcf;
       --accent: #d9480f;
+      --accent-text: #ffffff;
       --ok: #2b8a3e;
       --ko: #c92a2a;
-      --wait: #868e96;
+      --radius: 14px;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #16140f;
-        --card: #211e18;
-        --text: #f1ede4;
-        --muted: #a59f92;
-        --border: #3a352c;
-        --accent: #ff8a3d;
+        --bg: #15120e;
+        --surface: #201c16;
+        --surface-2: #2a251d;
+        --text: #f3eee5;
+        --muted: #a89f91;
+        --border: #3a3329;
+        --accent: #ff7a2f;
+        --accent-text: #1a1209;
         --ok: #51cf66;
         --ko: #ff6b6b;
-        --wait: #868e96;
       }
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
       background: var(--bg);
       color: var(--text);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       line-height: 1.5;
     }
-    main { width: 100%; max-width: 520px; }
-    header { margin-bottom: 24px; }
-    .brand {
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 600;
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+    button { font: inherit; cursor: pointer; }
+
+    /* Header */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
     }
-    h1 { margin: 4px 0 8px; font-size: 2rem; line-height: 1.2; }
-    .subtitle { margin: 0; color: var(--muted); }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
+    .topbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+    .logo span { color: var(--accent); }
+    .cart-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      background: var(--accent); color: var(--accent-text);
+      border: 0; font-weight: 600; text-decoration: none;
     }
-    .status-row { display: flex; align-items: center; gap: 12px; }
-    .dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--wait);
-      flex-shrink: 0;
+
+    /* Hero */
+    .hero { padding: 56px 0 40px; }
+    .hero h1 { font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.05; margin: 0 0 12px; letter-spacing: -0.03em; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 520px; margin: 0 0 24px; }
+    .hero-cta { display: inline-block; padding: 12px 22px; border-radius: 999px; background: var(--text); color: var(--bg); text-decoration: none; font-weight: 600; }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; padding-bottom: 48px; }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+    /* Menu */
+    .category h2 { font-size: 1.2rem; margin: 28px 0 12px; }
+    .category:first-child h2 { margin-top: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+    .product {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px; display: flex; flex-direction: column; gap: 6px;
     }
-    .dot.ok { background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 20%, transparent); }
-    .dot.ko { background: var(--ko); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ko) 20%, transparent); }
-    .status-label { font-weight: 600; font-size: 1.05rem; }
-    dl {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 6px 16px;
-      margin: 16px 0 0;
-      font-size: 0.9rem;
+    .product-head { display: flex; align-items: center; justify-content: space-between; }
+    .product-emoji { font-size: 2rem; line-height: 1; }
+    .tag { font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--accent); }
+    .product h3 { margin: 6px 0 0; font-size: 1rem; }
+    .product p { margin: 0; color: var(--muted); font-size: 0.88rem; flex: 1; }
+    .product-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+    .price { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .add {
+      border: 1px solid var(--accent); background: transparent; color: var(--accent);
+      border-radius: 999px; padding: 6px 14px; font-weight: 600;
     }
-    dt { color: var(--muted); }
-    dd { margin: 0; font-variant-numeric: tabular-nums; word-break: break-word; }
-    .actions { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 12px; }
-    button {
-      font: inherit;
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      cursor: pointer;
+    .add:hover { background: var(--accent); color: var(--accent-text); }
+    .placeholder { color: var(--muted); padding: 24px 0; }
+
+    /* Cart */
+    .cart {
+      position: sticky; top: 76px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px;
     }
-    button:hover { border-color: var(--accent); color: var(--accent); }
-    button:disabled { opacity: 0.6; cursor: wait; }
-    .hint { color: var(--muted); font-size: 0.8rem; }
-    footer { margin-top: 16px; color: var(--muted); font-size: 0.8rem; text-align: center; }
+    .cart h2 { margin: 0 0 12px; font-size: 1.15rem; }
+    .cart-empty { color: var(--muted); font-size: 0.92rem; margin: 0 0 8px; }
+    .cart-lines { list-style: none; margin: 0; padding: 0; }
+    .cart-line { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    .cart-line .name { flex: 1; }
+    .qty { display: inline-flex; align-items: center; gap: 6px; }
+    .qty button {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface-2); color: var(--text); line-height: 1;
+    }
+    .cart-line .line-total { width: 64px; text-align: right; font-variant-numeric: tabular-nums; }
+    .cart-total { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; margin: 14px 0; }
+    form { display: grid; gap: 10px; }
+    label { font-size: 0.85rem; color: var(--muted); display: grid; gap: 4px; }
+    input {
+      font: inherit; padding: 9px 12px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    }
+    input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .submit {
+      border: 0; border-radius: 10px; padding: 12px; font-weight: 700;
+      background: var(--accent); color: var(--accent-text);
+    }
+    .submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error { color: var(--ko); font-size: 0.88rem; margin: 0; min-height: 1.2em; }
+
+    /* Confirmation */
+    .confirm { text-align: center; padding: 8px 0; }
+    .confirm .big { font-size: 2.6rem; }
+    .confirm h2 { margin: 4px 0; }
+    .confirm p { color: var(--muted); margin: 4px 0 14px; }
+    .confirm button { border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 10px; padding: 8px 16px; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 24px 0 32px; color: var(--muted); font-size: 0.88rem; }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; }
+    .status { display: inline-flex; align-items: center; gap: 8px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+    .dot.ok { background: var(--ok); }
+    .dot.ko { background: var(--ko); }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+      background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+      font-size: 0.9rem; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
-  <main>
-    <header>
-      <div class="brand">Tacos3V</div>
-      <h1>Application en production</h1>
-      <p class="subtitle">Frontend Nginx · Backend Node.js · Docker</p>
-    </header>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="logo">Tacos<span>3V</span></div>
+      <a class="cart-link" href="#cart">🛒 <span id="cart-count">0</span> · <span id="cart-total-top">0,00 €</span></a>
+    </div>
+  </header>
 
-    <section class="card" aria-live="polite">
-      <div class="status-row">
-        <span id="dot" class="dot"></span>
-        <span id="status" class="status-label">Vérification du backend…</span>
-      </div>
-      <dl>
-        <dt>Service</dt><dd id="service">—</dd>
-        <dt>Réponse</dt><dd id="latency">—</dd>
-        <dt>Horodatage</dt><dd id="timestamp">—</dd>
-      </dl>
-      <div class="actions">
-        <span class="hint">Actualisation auto toutes les 30 s</span>
-        <button id="refresh" type="button">Actualiser</button>
-      </div>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Le tacos <em>3 viandes</em>,<br>prêt en 15 minutes.</h1>
+      <p>Poulet, kefta, cordon bleu et sauce fromagère maison. Commande en ligne, retrait au comptoir.</p>
+      <a class="hero-cta" href="#menu">Voir le menu</a>
     </section>
 
-    <footer>GET /api/health</footer>
+    <div class="layout">
+      <section id="menu" aria-label="Menu">
+        <p class="placeholder">Chargement du menu…</p>
+      </section>
+
+      <aside id="cart" class="cart" aria-live="polite"></aside>
+    </div>
   </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>Tacos3V</strong> · 3 rue de la Démo, 75000 Paris<br>
+        Ouvert tous les jours, 11h30 – 23h
+      </div>
+      <div class="status"><span id="dot" class="dot"></span><span id="status">Vérification de l'API…</span></div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
 
   <script>
     const $ = (id) => document.getElementById(id);
+    const euros = (cents) => (cents / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
 
-    async function checkHealth() {
-      const btn = $('refresh');
-      btn.disabled = true;
-      const start = performance.now();
+    // Build DOM nodes without innerHTML so text from the API is never parsed as HTML.
+    function el(tag, props = {}, children = []) {
+      const node = document.createElement(tag);
+      Object.assign(node, props);
+      for (const child of [].concat(children)) {
+        if (child != null) node.append(child);
+      }
+      return node;
+    }
+
+    let menu = [];
+    const cart = new Map(); // product id -> quantity
+    let lastOrder = null;
+
+    // ---------- Menu ----------
+    async function loadMenu() {
       try {
-        const res = await fetch('/api/health', { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        const ms = Math.round(performance.now() - start);
-        $('dot').className = 'dot ' + (data.status === 'ok' ? 'ok' : 'ko');
-        $('status').textContent = data.status === 'ok' ? 'Backend opérationnel' : 'Backend : ' + data.status;
-        $('service').textContent = data.service || '—';
-        $('latency').textContent = ms + ' ms';
-        $('timestamp').textContent = data.timestamp
-          ? new Date(data.timestamp).toLocaleString('fr-FR')
-          : '—';
-      } catch (err) {
-        $('dot').className = 'dot ko';
-        $('status').textContent = 'Backend indisponible';
-        $('service').textContent = '—';
-        $('latency').textContent = err.message;
-        $('timestamp').textContent = new Date().toLocaleString('fr-FR');
-      } finally {
-        btn.disabled = false;
+        const res = await fetch('/api/menu');
+        if (!res.ok) throw new Error();
+        menu = await res.json();
+        renderMenu();
+      } catch {
+        $('menu').replaceChildren(el('p', { className: 'placeholder', textContent: 'Menu indisponible. Le backend répond-il ?' }));
       }
     }
 
-    $('refresh').addEventListener('click', checkHealth);
+    function renderMenu() {
+      const categories = [...new Set(menu.map((p) => p.category))];
+      const sections = categories.map((cat) =>
+        el('div', { className: 'category' }, [
+          el('h2', { textContent: cat }),
+          el('div', { className: 'grid' }, menu.filter((p) => p.category === cat).map(renderProduct)),
+        ])
+      );
+      $('menu').replaceChildren(...sections);
+    }
+
+    function renderProduct(p) {
+      const add = el('button', { className: 'add', type: 'button', textContent: 'Ajouter' });
+      add.addEventListener('click', () => {
+        cart.set(p.id, (cart.get(p.id) || 0) + 1);
+        lastOrder = null;
+        renderCart();
+        toast(p.name + ' ajouté');
+      });
+      return el('article', { className: 'product' }, [
+        el('div', { className: 'product-head' }, [
+          el('span', { className: 'product-emoji', textContent: p.emoji || '🍽️' }),
+          p.tag ? el('span', { className: 'tag', textContent: p.tag }) : null,
+        ]),
+        el('h3', { textContent: p.name }),
+        el('p', { textContent: p.description }),
+        el('div', { className: 'product-foot' }, [
+          el('span', { className: 'price', textContent: euros(p.price) }),
+          add,
+        ]),
+      ]);
+    }
+
+    // ---------- Cart ----------
+    function cartTotal() {
+      let total = 0, count = 0;
+      for (const [id, qty] of cart) {
+        const p = menu.find((m) => m.id === id);
+        if (p) { total += p.price * qty; count += qty; }
+      }
+      return { total, count };
+    }
+
+    function changeQty(id, delta) {
+      const qty = (cart.get(id) || 0) + delta;
+      if (qty <= 0) cart.delete(id); else cart.set(id, Math.min(qty, 20));
+      renderCart();
+    }
+
+    function renderCart() {
+      const { total, count } = cartTotal();
+      $('cart-count').textContent = count;
+      $('cart-total-top').textContent = euros(total);
+
+      if (lastOrder) return renderConfirmation();
+
+      const box = $('cart');
+      if (count === 0) {
+        box.replaceChildren(
+          el('h2', { textContent: 'Votre panier' }),
+          el('p', { className: 'cart-empty', textContent: 'Votre panier est vide. Ajoutez un tacos pour commencer.' })
+        );
+        return;
+      }
+
+      const lines = [...cart].map(([id, qty]) => {
+        const p = menu.find((m) => m.id === id);
+        const minus = el('button', { type: 'button', textContent: '−', ariaLabel: 'Retirer un' });
+        const plus = el('button', { type: 'button', textContent: '+', ariaLabel: 'Ajouter un' });
+        minus.addEventListener('click', () => changeQty(id, -1));
+        plus.addEventListener('click', () => changeQty(id, 1));
+        return el('li', { className: 'cart-line' }, [
+          el('span', { className: 'name', textContent: p.name }),
+          el('span', { className: 'qty' }, [minus, el('span', { textContent: qty }), plus]),
+          el('span', { className: 'line-total', textContent: euros(p.price * qty) }),
+        ]);
+      });
+
+      const name = el('input', { name: 'name', required: true, maxLength: 50, placeholder: 'Ex. Sofiane', autocomplete: 'given-name' });
+      const time = el('input', { name: 'pickupTime', type: 'time', min: '11:30', max: '23:00' });
+      const error = el('p', { className: 'error' });
+      const submit = el('button', { className: 'submit', type: 'submit', textContent: 'Commander · ' + euros(total) });
+      const form = el('form', {}, [
+        el('label', {}, ['Votre prénom', name]),
+        el('label', {}, ['Heure de retrait (optionnel)', time]),
+        error,
+        submit,
+      ]);
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        placeOrder(name.value, time.value, submit, error);
+      });
+
+      box.replaceChildren(
+        el('h2', { textContent: 'Votre panier' }),
+        el('ul', { className: 'cart-lines' }, lines),
+        el('div', { className: 'cart-total' }, [el('span', { textContent: 'Total' }), el('span', { textContent: euros(total) })]),
+        form
+      );
+    }
+
+    async function placeOrder(name, pickupTime, submit, error) {
+      submit.disabled = true;
+      error.textContent = '';
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            pickupTime: pickupTime || undefined,
+            items: [...cart].map(([id, qty]) => ({ id, qty })),
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Erreur ' + res.status);
+        lastOrder = data;
+        cart.clear();
+        renderCart();
+      } catch (err) {
+        error.textContent = err.message === 'Failed to fetch' ? 'Serveur injoignable.' : err.message;
+        submit.disabled = false;
+      }
+    }
+
+    function renderConfirmation() {
+      const o = lastOrder;
+      const when = o.pickupTime
+        ? 'à ' + o.pickupTime.replace(':', 'h')
+        : 'dans environ 15 minutes';
+      const again = el('button', { type: 'button', textContent: 'Nouvelle commande' });
+      again.addEventListener('click', () => { lastOrder = null; renderCart(); });
+      $('cart').replaceChildren(
+        el('div', { className: 'confirm' }, [
+          el('div', { className: 'big', textContent: '✅' }),
+          el('h2', { textContent: 'Commande n°' + o.number }),
+          el('p', { textContent: 'Merci ' + o.name + ' ! ' + euros(o.total) + ', à récupérer ' + when + '.' }),
+          again,
+        ])
+      );
+    }
+
+    // ---------- Misc ----------
+    let toastTimer;
+    function toast(msg) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/health', { cache: 'no-store' });
+        const data = await res.json();
+        const ok = res.ok && data.status === 'ok';
+        $('dot').className = 'dot ' + (ok ? 'ok' : 'ko');
+        $('status').textContent = ok ? 'API en ligne' : 'API en erreur';
+      } catch {
+        $('dot').className = 'dot ko';
+        $('status').textContent = 'API hors ligne';
+      }
+    }
+
+    renderCart();
+    loadMenu();
     checkHealth();
     setInterval(checkHealth, 30000);
   </script>

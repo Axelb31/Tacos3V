@@ -1,0 +1,12 @@
+[
+  { "id": "tacos-3v", "category": "Tacos", "name": "Tacos 3 Viandes", "description": "Poulet, kefta, cordon bleu, frites et sauce fromagère maison.", "price": 1090, "emoji": "🌯", "tag": "Signature" },
+  { "id": "tacos-poulet", "category": "Tacos", "name": "Tacos Poulet", "description": "Poulet mariné, frites, sauce fromagère.", "price": 790, "emoji": "🌯" },
+  { "id": "tacos-cordon", "category": "Tacos", "name": "Tacos Cordon Bleu", "description": "Cordon bleu croustillant, frites, sauce fromagère.", "price": 850, "emoji": "🌯" },
+  { "id": "tacos-kefta", "category": "Tacos", "name": "Tacos Kefta", "description": "Kefta épicée, oignons, frites, sauce algérienne.", "price": 850, "emoji": "🌯" },
+  { "id": "tacos-vege", "category": "Tacos", "name": "Tacos Végé", "description": "Falafels, légumes grillés, frites, sauce blanche.", "price": 790, "emoji": "🥙", "tag": "Végé" },
+  { "id": "frites", "category": "À côté", "name": "Frites maison", "description": "Portion généreuse, sel et paprika.", "price": 300, "emoji": "🍟" },
+  { "id": "nuggets", "category": "À côté", "name": "Nuggets x6", "description": "Poulet pané, sauce au choix.", "price": 450, "emoji": "🍗" },
+  { "id": "coca", "category": "Boissons", "name": "Coca-Cola 33 cl", "description": "Bien frais.", "price": 200, "emoji": "🥤" },
+  { "id": "eau", "category": "Boissons", "name": "Eau minérale 50 cl", "description": "Plate.", "price": 150, "emoji": "💧" },
+  { "id": "tiramisu", "category": "Desserts", "name": "Tiramisu", "description": "Fait maison, café ou spéculoos.", "price": 350, "emoji": "🍰" }
+]
