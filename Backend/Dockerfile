@@ -1,11 +1,12 @@
-FROM node:alpine
+# --- Build (Assets statiques) ---
+FROM alpine:latest AS builder
 WORKDIR /app
+COPY index.html ./
 
-COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+# --- High-Performance Web Server ---
+FROM nginx:alpine AS runner
+COPY --from=builder /app/index.html /usr/share/nginx/html/index.html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY index.js menu.json ./
-
-USER node
-EXPOSE 3000
-CMD ["node", "index.js"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
